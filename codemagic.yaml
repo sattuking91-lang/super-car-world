@@ -9,11 +9,10 @@ workflows:
       - name: Unzip project
         script: |
           unzip -o super-car-world.zip
-          ls super-car-world
+          ls
       - name: Build APK
         script: |
-          cd super-car-world
           chmod +x gradlew
           ./gradlew assembleDebug
     artifacts:
-      - super-car-world/app/build/outputs/apk/debug/*.apk
+      - app/build/outputs/apk/debug/*.apk
