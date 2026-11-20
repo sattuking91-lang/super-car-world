@@ -1,0 +1,33 @@
+workflows:
+  android-workflow:
+    name: Android Workflow
+    instance_type: mac_mini_m1
+    max_build_duration: 60
+    environment:
+      java: 17
+    scripts:
+      - name: Unzip project
+        script: |
+          unzip -o super-car-world.zip
+          ls
+          cat app/build.gradle
+      - name: Create missing files
+        script: |
+          cat > settings.gradle <<'EOF'
+          pluginManagement {
+              repositories { google(); mavenCentral(); gradlePluginPortal() }
+          }
+          dependencyResolutionManagement {
+              repositories { google(); mavenCentral() }
+          }
+          rootProject.name = "SuperCarWorld"
+          include ':app'
+          EOF
+          echo "// top-level" > build.gradle
+          cat settings.gradle
+          cat build.gradle
+      - name: Build APK
+        script: |
+          gradle assembleDebug --stacktrace
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
