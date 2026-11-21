@@ -1,0 +1,26 @@
+workflows:
+  android-workflow:
+    name: Android Workflow
+    instance_type: mac_mini_m1
+    max_build_duration: 60
+    environment:
+      java: 17
+    scripts:
+      - name: Unzip project
+        script: |
+          unzip -o super-car-world.zip
+          ls -R | head -n 100
+      - name: Make gradlew
+        script: |
+          mkdir -p gradle/wrapper
+          gradle wrapper --gradle-version 9.3.1 --distribution-type bin
+          chmod +x gradlew
+      - name: Make debug keystore
+        script: |
+          keytool -genkey -v -keystore debug.keystore -alias androiddebugkey -storepass android -keypass android -keyalg RSA -keysize 2048 -validity 10000 -d "CN=Android Debug,O=Android,C=US"
+          ls -la debug.keystore
+      - name: Build APK
+        script: |
+          ./gradlew assembleDebug --stacktrace
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
