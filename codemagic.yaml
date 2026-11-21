@@ -1,0 +1,19 @@
+workflows:
+  android-workflow:
+    name: Android Workflow
+    instance_type: mac_mini_m1
+    max_build_duration: 60
+    environment:
+      java: 17
+    scripts:
+      - name: Unzip project
+        script: |
+          unzip -o super-car-world.zip
+          ls -R | head -n 100
+          echo "--- settings ---"
+          cat settings.gradle.kts || cat settings.gradle || true
+      - name: Build APK
+        script: |
+          gradle assembleDebug --stacktrace
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
